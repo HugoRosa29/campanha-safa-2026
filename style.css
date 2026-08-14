@@ -355,6 +355,38 @@ table.ranking tbody tr:hover { filter: brightness(0.97); }
 
 .btn-download:hover { border-color: var(--accent); color: var(--accent-strong); }
 
+.export-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: #201700;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-pdf:hover { background: var(--accent-strong); }
+.btn-pdf:active { transform: translateY(1px); }
+.btn-pdf:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+.export-hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 .empty-state {
   padding: 60px 20px;
   text-align: center;

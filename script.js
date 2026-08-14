@@ -336,7 +336,11 @@ function renderPagina({ unidades, segmentos, ranking }) {
   const exportHtml = `
     <div class="export-section">
       <h3 class="section-title">📥 Exportar Relatório Consolidado (Todas as Turmas)</h3>
-      <button id="btnDownload" class="btn-download">📄 Baixar Relatório Completo em CSV</button>
+      <div class="export-buttons">
+        <button id="btnPdf" class="btn-pdf">🖨️ Emitir Relatório em PDF</button>
+        <button id="btnDownload" class="btn-download">📄 Baixar Relatório Completo em CSV</button>
+      </div>
+      <p class="export-hint">O PDF traz cabeçalho oficial, indicadores gerais, ranking completo e o regulamento aplicado${finalizada ? ", além do destaque da turma campeã" : " (marcado como apuração parcial)"}.</p>
     </div>`;
 
   el.content.innerHTML =
@@ -352,6 +356,30 @@ function renderPagina({ unidades, segmentos, ranking }) {
 
   document.getElementById("btnDownload").addEventListener("click", () => {
     baixarCsv(ranking, cols);
+  });
+
+  document.getElementById("btnPdf").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const rotulo = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "⏳ Gerando PDF...";
+    // deixa o navegador pintar o estado de carregamento antes de montar o documento
+    setTimeout(() => {
+      try {
+        gerarRelatorioPdf(ranking, {
+          finalizada,
+          unidadeFiltro: state.unidadeFiltro,
+          segmentoFiltro: state.segmentoFiltro,
+          pontosPorItem: PONTOS_POR_ITEM,
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Não foi possível gerar o PDF. Tente novamente.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = rotulo;
+      }
+    }, 30);
   });
 }
 
