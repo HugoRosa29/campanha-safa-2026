@@ -257,11 +257,12 @@ function calcularRanking(rows) {
   }
 
   // Colocação por faixa de Pts nos Jogos: turmas com a mesma pontuação de jogos
-  // dividem a mesma posição (1º, 2º, 2º, 2º, 5º ...).
+  // dividem a mesma posição e a numeração segue sem saltos (1º, 2º, 2º, 2º, 3º ...).
   resumo.forEach((r, i) => {
     const anterior = resumo[i - 1];
-    r["Posição"] =
-      anterior && anterior["Pts nos Jogos"] === r["Pts nos Jogos"] ? anterior["Posição"] : i + 1;
+    if (!anterior) r["Posição"] = 1;
+    else if (anterior["Pts nos Jogos"] === r["Pts nos Jogos"]) r["Posição"] = anterior["Posição"];
+    else r["Posição"] = anterior["Posição"] + 1;
   });
 
   return resumo;

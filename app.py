@@ -160,13 +160,16 @@ if lista_dfs:
         if not df_ranking.empty and df_ranking.iloc[0]["Elegível Campeã"] == "SIM":
             df_ranking.loc[1, "Pts nos Jogos"] = 7
 
-        # Colocação: turmas com os mesmos Pts nos Jogos dividem a mesma posição
+        # Colocação: turmas com os mesmos Pts nos Jogos dividem a mesma posição,
+        # com numeração sequencial por faixa (1º, 2º, 2º, 2º, 3º ...)
         posicoes = []
         for i, pts in enumerate(df_ranking["Pts nos Jogos"].tolist()):
-            if i > 0 and pts == df_ranking["Pts nos Jogos"].iloc[i - 1]:
+            if i == 0:
+                posicoes.append(1)
+            elif pts == df_ranking["Pts nos Jogos"].iloc[i - 1]:
                 posicoes.append(posicoes[-1])
             else:
-                posicoes.append(i + 1)
+                posicoes.append(posicoes[-1] + 1)
         df_ranking.index = pd.Index(posicoes, name="Posição")
 
         # MÉTRICAS
