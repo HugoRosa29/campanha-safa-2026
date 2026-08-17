@@ -21,6 +21,9 @@ const LINK_PADRAO_SOBRADINHO =
 
 const STORAGE_KEY = "gincana-safa-2026-links";
 
+// Abaixo desta pontuação a turma não pontua nos Jogos (sem doação ou apenas 1 cesta).
+const PONTUACAO_MINIMA_PARA_PONTUAR = 20;
+
 // ---------- Estado ----------
 let state = {
   unidadeFiltro: "Todas",
@@ -219,11 +222,13 @@ function calcularRanking(rows) {
     const ptsAgasalhosValidos = Math.min(ptsAgasalhosBrutos, 100);
     const pontosTotais = ptsAlimentos + ptsAgasalhosValidos;
 
+    // Turmas sem doação (ou com participação apenas simbólica) ficam zeradas.
     let ptsJogos;
-    if (pontosTotais <= 100) ptsJogos = 1;
-    else if (pontosTotais <= 200) ptsJogos = 2;
-    else if (pontosTotais <= 300) ptsJogos = 3;
-    else if (pontosTotais <= 400) ptsJogos = 4;
+    if (pontosTotais < PONTUACAO_MINIMA_PARA_PONTUAR) ptsJogos = 0;
+    else if (pontosTotais <= 199) ptsJogos = 1;
+    else if (pontosTotais <= 299) ptsJogos = 2;
+    else if (pontosTotais <= 399) ptsJogos = 3;
+    else if (pontosTotais <= 499) ptsJogos = 4;
     else ptsJogos = 5;
 
     const elegivelCampea = totalCestas >= 60 || pontosTotais >= 700;
@@ -250,6 +255,14 @@ function calcularRanking(rows) {
   if (resumo.length && resumo[0]["Elegível Campeã"] === "SIM") {
     resumo[0]["Pts nos Jogos"] = 7;
   }
+
+  // Colocação por faixa de Pts nos Jogos: turmas com a mesma pontuação de jogos
+  // dividem a mesma posição (1º, 2º, 2º, 2º, 5º ...).
+  resumo.forEach((r, i) => {
+    const anterior = resumo[i - 1];
+    r["Posição"] =
+      anterior && anterior["Pts nos Jogos"] === r["Pts nos Jogos"] ? anterior["Posição"] : i + 1;
+  });
 
   return resumo;
 }
@@ -299,10 +312,10 @@ function renderPagina({ unidades, segmentos, ranking }) {
   ];
 
   const rowsHtml = ranking
-    .map((r, i) => {
+    .map((r) => {
       const cells = cols
         .map((c) => {
-          if (c === "Posição") return `<td>${i + 1}</td>`;
+          if (c === "Posição") return `<td>${r[c]}º</td>`;
           if (c === "Elegível Campeã") {
             const yes = r[c] === "SIM";
             return `<td><span class="badge ${yes ? "yes" : "no"}">${r[c]}</span></td>`;
@@ -418,10 +431,10 @@ function bindFiltroEvents() {
 
 function baixarCsv(ranking, cols) {
   const header = cols.join(",");
-  const linhas = ranking.map((r, i) =>
+  const linhas = ranking.map((r) =>
     cols
       .map((c) => {
-        const val = c === "Posição" ? i + 1 : r[c];
+        const val = r[c];
         const str = String(val ?? "");
         return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
       })

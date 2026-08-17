@@ -266,9 +266,9 @@ function desenharRegulamento(doc, y, pontosPorItem) {
 
   const regras = [
     "Agasalhos: são considerados no máximo 100 pontos válidos por turma; o excedente aparece apenas como pontuação bruta.",
-    "Pontos nos Jogos: até 100 pts = 1 · 101 a 200 = 2 · 201 a 300 = 3 · 301 a 400 = 4 · acima de 400 = 5.",
+    "Pontos nos Jogos: até 199 pts = 1 · 200 a 299 = 2 · 300 a 399 = 3 · 400 a 499 = 4 · 500 ou mais = 5. Turmas sem doação (ou com menos de 20 pontos) ficam zeradas.",
     "Prêmio principal: a turma líder só é declarada campeã ao atingir 60 cestas ou 700 pontos, recebendo 7 pontos nos Jogos e o passeio na chácara.",
-    "Desempate: maior pontuação total e, em seguida, maior número de cestas.",
+    "Colocação: turmas com a mesma quantidade de Pts nos Jogos dividem a mesma posição; a ordem interna segue a pontuação total e, depois, o número de cestas.",
   ];
 
   let yRegra = y + 6;
@@ -370,8 +370,8 @@ function gerarRelatorioPdf(ranking, opcoes) {
     "Campeã?",
   ];
 
-  const corpo = ranking.map((r, i) => [
-    `${i + 1}º`,
+  const corpo = ranking.map((r) => [
+    `${r["Posição"]}º`,
     r.Unidade,
     r.Segmento,
     r.Turma,

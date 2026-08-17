@@ -8,6 +8,9 @@ st.title("🏆 Gincana SAFA 2026 — Sistema de Controle e Ranking")
 st.markdown("---")
 
 # DICIONÁRIO DE PONTUAÇÃO (Regulamento)
+# Abaixo desta pontuação a turma não pontua nos Jogos (sem doação ou apenas 1 cesta).
+PONTUACAO_MINIMA_PARA_PONTUAR = 20
+
 PONTOS_POR_ITEM = {
     "Cesta Básica": (10, 1),
     "Cesta Intermediária": (15, 1),
@@ -117,14 +120,16 @@ if lista_dfs:
         pts_agasalhos_validos = min(pts_agasalhos_brutos, 100)
         pontos_totais = pts_alimentos + pts_agasalhos_validos
 
-        # Tabela dos Jogos
-        if pontos_totais <= 100:
+        # Tabela dos Jogos (turmas sem doação relevante ficam zeradas)
+        if pontos_totais < PONTUACAO_MINIMA_PARA_PONTUAR:
+            pts_jogos = 0
+        elif pontos_totais <= 199:
             pts_jogos = 1
-        elif pontos_totais <= 200:
+        elif pontos_totais <= 299:
             pts_jogos = 2
-        elif pontos_totais <= 300:
+        elif pontos_totais <= 399:
             pts_jogos = 3
-        elif pontos_totais <= 400:
+        elif pontos_totais <= 499:
             pts_jogos = 4
         else:
             pts_jogos = 5
@@ -154,6 +159,15 @@ if lista_dfs:
         # Atribuição de 7 pts para o Campeão Elegível
         if not df_ranking.empty and df_ranking.iloc[0]["Elegível Campeã"] == "SIM":
             df_ranking.loc[1, "Pts nos Jogos"] = 7
+
+        # Colocação: turmas com os mesmos Pts nos Jogos dividem a mesma posição
+        posicoes = []
+        for i, pts in enumerate(df_ranking["Pts nos Jogos"].tolist()):
+            if i > 0 and pts == df_ranking["Pts nos Jogos"].iloc[i - 1]:
+                posicoes.append(posicoes[-1])
+            else:
+                posicoes.append(i + 1)
+        df_ranking.index = pd.Index(posicoes, name="Posição")
 
         # MÉTRICAS
         m1, m2, m3, m4 = st.columns(4)
