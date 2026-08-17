@@ -309,7 +309,6 @@ function renderPagina({ unidades, segmentos, ranking }) {
     "Pts Brutos Agasalhos",
     "Pontuação Total",
     "Pts nos Jogos",
-    "Elegível Campeã",
   ];
 
   const rowsHtml = ranking
@@ -317,10 +316,6 @@ function renderPagina({ unidades, segmentos, ranking }) {
       const cells = cols
         .map((c) => {
           if (c === "Posição") return `<td>${r[c]}º</td>`;
-          if (c === "Elegível Campeã") {
-            const yes = r[c] === "SIM";
-            return `<td><span class="badge ${yes ? "yes" : "no"}">${r[c]}</span></td>`;
-          }
           return `<td>${r[c]}</td>`;
         })
         .join("");
@@ -369,7 +364,7 @@ function renderPagina({ unidades, segmentos, ranking }) {
   bindFiltroEvents();
 
   document.getElementById("btnDownload").addEventListener("click", () => {
-    baixarCsv(ranking, cols);
+    baixarCsv(ranking, [...cols, "Elegível Campeã"]);
   });
 
   document.getElementById("btnPdf").addEventListener("click", (e) => {

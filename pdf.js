@@ -367,7 +367,6 @@ function gerarRelatorioPdf(ranking, opcoes) {
     "Agas.\nbrutos",
     "TOTAL",
     "Pts jogos",
-    "Campeã?",
   ];
 
   const corpo = ranking.map((r) => [
@@ -381,7 +380,6 @@ function gerarRelatorioPdf(ranking, opcoes) {
     pdfNum(r["Pts Brutos Agasalhos"]),
     pdfNum(r["Pontuação Total"]),
     pdfNum(r["Pts nos Jogos"]),
-    r["Elegível Campeã"],
   ]);
 
   doc.autoTable({

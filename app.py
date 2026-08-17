@@ -180,7 +180,7 @@ if lista_dfs:
         m4.metric("🏫 Total de Turmas", len(df_ranking))
 
         st.markdown("### 🥇 Ranking das Turmas")
-        st.dataframe(df_ranking, use_container_width=True)
+        st.dataframe(df_ranking.drop(columns=["Elegível Campeã"]), use_container_width=True)
 
         # LÍDER / CAMPEÃO
         lider = df_ranking.iloc[0]
